@@ -1,6 +1,2 @@
-openai
-charset-normalizer==2.1.0
 streamlit
-requests
-razorpay==1.3.0
-streamlit-javascript==0.1.5
+pytesseract
