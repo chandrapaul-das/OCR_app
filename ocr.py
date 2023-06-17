@@ -3,8 +3,11 @@ import pytesseract
 from PIL import Image
 
 def ocr(image):
+    # Convert image to grayscale
+    gray_image = image.convert("L")
+
     # Perform OCR using Tesseract
-    text = pytesseract.image_to_string(image, lang='eng')
+    text = pytesseract.image_to_string(gray_image, lang='eng')
     return text
 
 def main():
@@ -17,7 +20,7 @@ def main():
 
     if uploaded_file is not None:
         # Read image file
-        image = Image.open(io.BytesIO(uploaded_file.read()))
+        image = Image.open(uploaded_file)
 
         # Display uploaded image
         st.image(image, caption='Uploaded Image', use_column_width=True)
