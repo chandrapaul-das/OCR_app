@@ -1,51 +1,35 @@
-import openai
 import streamlit as st
-#from charset_normalizer import md__mypyc
-import config
-#import requests
+import pytesseract
+import cv2
 
+def ocr(image):
+    # Convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-import streamlit.components.v1 as components
-from streamlit_javascript import st_javascript
-import time
-
-
-openai.api_key=config.api_key
+    # Perform OCR using Tesseract
+    text = pytesseract.image_to_string(gray, lang='eng')
+    return text
 
 def main():
-    st.title("Evaluate Answers")
-    st.subheader('This app has been developed and serviced by InstaDataHelp Analytics Services')
-    #st.write('This app has been developed for evauating the answers')
-   
-    question = st.text_area("Enter the questions")
-    answer = st.text_area("Enter your answer here")
-    
-    content = 'Evaluate the answer of a question out of 10. The question is '+question + '. The answer is ' + answer
-        
-    
-       
-    if st.button("Check My Answer"):
-        with st.spinner("Generating Result ..."):
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{'role':'user','content':f'{content}\n\nDescription:'}]
-                
-            )
-            
-            
+    # Set Streamlit app title and description
+    st.title("OCR for English Handwritten Text")
+    st.write("Upload an image with English handwritten text for OCR.")
 
+    # Upload image
+    uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
 
-            description = response['choices'][0]['message']['content'] 
-            st.subheader("Generated Blog Content")
-            st.write(description)
-        #st.subheader("Modified Content with WordAI to avoid AI Tool Detection")
-        #st.write(x.json()['text'])        
+    if uploaded_file is not None:
+        # Read image file
+        image = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), 1)
 
-            
-    else:
-        st.write("Payment failed")
+        # Display uploaded image
+        st.image(image, caption='Uploaded Image', use_column_width=True)
 
-        
+        # Perform OCR on the image
+        if st.button('Perform OCR'):
+            text = ocr(image)
+            st.write("OCR Result:")
+            st.write(text)
 
-if __name__ == '__main__':
-   main()
+if __name__ == "__main__":
+    main()
