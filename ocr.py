@@ -1,37 +1,45 @@
-#pip install -r requirements.txt
+import easyocr as ocr  #OCR
+import streamlit as st  #Web App
+from PIL import Image #Image Processing
+import numpy as np #Image Processing 
 
-import streamlit as st
-import pytesseract
-from PIL import Image
+#title
+st.title("Easy OCR - Extract Text from Images")
 
-def ocr(image):
-    # Convert image to grayscale
-    gray_image = image.convert("L")
+#subtitle
+st.markdown("## Optical Character Recognition - Using `easyocr`, `streamlit`")
 
-    # Perform OCR using Tesseract
-    text = pytesseract.image_to_string(gray_image, lang='eng')
-    return text
+st.markdown("")
 
-def main():
-    # Set Streamlit app title and description
-    st.title("OCR for English Handwritten Text")
-    st.write("Upload an image with English handwritten text for OCR.")
+#image uploader
+image = st.file_uploader(label = "Upload your image here",type=['png','jpg','jpeg'])
 
-    # Upload image
-    uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
 
-    if uploaded_file is not None:
-        # Read image file
-        image = Image.open(uploaded_file)
+@st.cache
+def load_model(): 
+    reader = ocr.Reader(['en'],model_storage_directory='.')
+    return reader 
 
-        # Display uploaded image
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+reader = load_model() #load model
 
-        # Perform OCR on the image
-        if st.button('Perform OCR'):
-            text = ocr(image)
-            st.write("OCR Result:")
-            st.write(text)
+if image is not None:
 
-if __name__ == "__main__":
-    main()
+    input_image = Image.open(image) #read image
+    st.image(input_image) #display image
+
+    with st.spinner("🤖 AI is at Work! "):
+        
+
+        result = reader.readtext(np.array(input_image))
+
+        result_text = [] #empty list for results
+
+
+        for text in result:
+            result_text.append(text[1])
+
+        st.write(result_text)
+    #st.success("Here you go!")
+    st.balloons()
+else:
+    st.write("Upload an Image")
