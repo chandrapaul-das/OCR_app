@@ -1,13 +1,11 @@
 import streamlit as st
 import pytesseract
-import cv2
+from PIL import Image
+import io
 
 def ocr(image):
-    # Convert image to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
     # Perform OCR using Tesseract
-    text = pytesseract.image_to_string(gray, lang='eng')
+    text = pytesseract.image_to_string(image, lang='eng')
     return text
 
 def main():
@@ -20,7 +18,7 @@ def main():
 
     if uploaded_file is not None:
         # Read image file
-        image = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), 1)
+        image = Image.open(io.BytesIO(uploaded_file.read()))
 
         # Display uploaded image
         st.image(image, caption='Uploaded Image', use_column_width=True)
