@@ -1,7 +1,6 @@
 import streamlit as st
 import pytesseract
 from PIL import Image
-import io
 
 def ocr(image):
     # Perform OCR using Tesseract
