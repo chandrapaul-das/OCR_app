@@ -3,7 +3,6 @@ import streamlit as st  #Web App
 from PIL import Image #Image Processing
 import numpy as np #Image Processing 
 
-streamlit cache clear
 
 #title
 st.title("Easy OCR - Extract Text from Images")
